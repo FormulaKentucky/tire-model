@@ -224,126 +224,126 @@ def bound2(
 
 
 
-# def first_pass_y(data, x): 
-#     # Get the data
-#     F_y = -data["FY"]
-#     alpha = np.tan(data["SA"] * np.pi / 180)
+def first_pass_y(data, x): 
+    # Get the data
+    F_y = -data["FY"]
+    alpha = np.tan(data["SA"] * np.pi / 180)
         
-#     # Get the parameters
-#     B_y = x[0]
-#     C_y = x[1]
-#     D_y = x[2]
-#     E_y = x[3]
-#     S_hy = x[4]
-#     S_vy = x[5]
+    # Get the parameters
+    B_y = x[0]
+    C_y = x[1]
+    D_y = x[2]
+    E_y = x[3]
+    S_hy = x[4]
+    S_vy = x[5]
         
-#     # FORGE THE MAGIC FORMULA
-#     Y = D_y * np.sin(C_y * np.arctan(B_y * (alpha + S_hy) - E_y * (B_y * (alpha + S_hy) - np.arctan(B_y * (alpha + S_hy))))) + S_vy
+    # FORGE THE MAGIC FORMULA
+    Y = D_y * np.sin(C_y * np.arctan(B_y * (alpha + S_hy) - E_y * (B_y * (alpha + S_hy) - np.arctan(B_y * (alpha + S_hy))))) + S_vy
     
-#     return (Y - F_y).squeeze()
+    return (Y - F_y).squeeze()
 
-# def second_pass_y(data, F_z0, lambda_mu_y, BCDE_params, x):    
-#     # Get the BCDE parameters
-#     B_y = BCDE_params[:,0]
-#     C_y = BCDE_params[:,1]
-#     D_y = BCDE_params[:,2]
-#     E_y = BCDE_params[:,3]
-#     S_hy = BCDE_params[:,4]
-#     S_vy = BCDE_params[:,5]
+def second_pass_y(data, F_z0, lambda_mu_y, BCDE_params, x):    
+    # Get the BCDE parameters
+    B_y = BCDE_params[:,0]
+    C_y = BCDE_params[:,1]
+    D_y = BCDE_params[:,2]
+    E_y = BCDE_params[:,3]
+    S_hy = BCDE_params[:,4]
+    S_vy = BCDE_params[:,5]
         
-#     # Get the P parameters (THIS IS THE ORDER OF THE OUTPUT PARAMETERS)
-#     PDY1 = x[0]
-#     PDY2 = x[1]
-#     PDY3 = x[2]
-#     PCY1 = x[3]
-#     PKY1 = x[4]
-#     PKY2 = x[5]
-#     PKY3 = x[6]
-#     PKY4 = x[7]
-#     PKY5 = x[8]
-#     PKY6 = x[9]
-#     PKY7 = x[10]
-#     PHY1 = x[11]
-#     PHY2 = x[12]
-#     PEY1 = x[13]
-#     PEY2 = x[14]
-#     PEY3 = x[15]
-#     PEY4 = x[16]
-#     PEY5 = x[17]
-#     PVY1 = x[18]
-#     PVY2 = x[19]
-#     PVY3 = x[20]
-#     PVY4 = x[21]
+    # Get the P parameters (THIS IS THE ORDER OF THE OUTPUT PARAMETERS)
+    PDY1 = x[0]
+    PDY2 = x[1]
+    PDY3 = x[2]
+    PCY1 = x[3]
+    PKY1 = x[4]
+    PKY2 = x[5]
+    PKY3 = x[6]
+    PKY4 = x[7]
+    PKY5 = x[8]
+    PKY6 = x[9]
+    PKY7 = x[10]
+    PHY1 = x[11]
+    PHY2 = x[12]
+    PEY1 = x[13]
+    PEY2 = x[14]
+    PEY3 = x[15]
+    PEY4 = x[16]
+    PEY5 = x[17]
+    PVY1 = x[18]
+    PVY2 = x[19]
+    PVY3 = x[20]
+    PVY4 = x[21]
         
-#     # Initialize arrays
-#     F_z = -data[0]["FZ"]
-#     alpha = np.tan(data[0]["SA"] * np.pi / 180)
-#     gamma = np.sin(data[0]["IA"] * np.pi / 180)
+    # Initialize arrays
+    F_z = -data[0]["FZ"]
+    alpha = np.tan(data[0]["SA"] * np.pi / 180)
+    gamma = np.sin(data[0]["IA"] * np.pi / 180)
     
-#     # Load sensitivity factor
-#     df_z = (F_z - F_z0) / F_z0
+    # Load sensitivity factor
+    df_z = (F_z - F_z0) / F_z0
         
-#     # Solve for some stuff before hand
-#     mu_y = (PDY1 + PDY2 * df_z) * lambda_mu_y / (1 + PDY3 * gamma ** 2) 
-#     BCD_y = PKY1 * F_z0 * np.sin(PKY4 * np.arctan(F_z / ((PKY2 + PKY5 * gamma ** 2) * F_z0))) / (1 + PKY3 * gamma ** 2)
-#     S_vy_gamma = F_z * (PVY3 + PVY4 * df_z) * gamma
-#     K_y_gamma_0 = F_z * (PKY6 + PKY7 * df_z)
+    # Solve for some stuff before hand
+    mu_y = (PDY1 + PDY2 * df_z) * lambda_mu_y / (1 + PDY3 * gamma ** 2) 
+    BCD_y = PKY1 * F_z0 * np.sin(PKY4 * np.arctan(F_z / ((PKY2 + PKY5 * gamma ** 2) * F_z0))) / (1 + PKY3 * gamma ** 2)
+    S_vy_gamma = F_z * (PVY3 + PVY4 * df_z) * gamma
+    K_y_gamma_0 = F_z * (PKY6 + PKY7 * df_z)
         
-#     # Fit parameters to B C D E P_hy and P_vy
-#     shit = (
-#     D_y[0] - (mu_y * F_z),
-#     C_y[0] - PCY1,
-#     B_y[0] - BCD_y / (mu_y * F_z * PCY1 + 1e-8),
-#     S_hy[0] - ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - S_vy_gamma) / (BCD_y + 1e-8)),
-#     E_y[0] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) * np.sign(alpha + ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)) / (BCD_y + 1e-8))))),
-#     S_vy[0] - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)
-#     )
+    # Fit parameters to B C D E P_hy and P_vy
+    shit = (
+    D_y[0] - (mu_y * F_z),
+    C_y[0] - PCY1,
+    B_y[0] - BCD_y / (mu_y * F_z * PCY1 + 1e-8),
+    S_hy[0] - ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - S_vy_gamma) / (BCD_y + 1e-8)),
+    E_y[0] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) * np.sign(alpha + ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)) / (BCD_y + 1e-8))))),
+    S_vy[0] - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)
+    )
     
-#     # print((D_y[0] - (mu_y * F_z)).shape)
-#     # print((C_y[0] - PCY1).shape)
-#     # print((B_y[0] - BCD_y / (mu_y * F_z * PCY1)).shape)
-#     # print((S_hy[0] - (PHY1 + PHY2 * df_z)).shape)
-#     # print((E_y[0] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) - np.sign(alpha + S_hy)))).shape)
-#     # print((S_vy[0] - ((PVY1 + PVY2 * df_z) * F_z)).shape)
-#     # print(gamma.shape)
+    # print((D_y[0] - (mu_y * F_z)).shape)
+    # print((C_y[0] - PCY1).shape)
+    # print((B_y[0] - BCD_y / (mu_y * F_z * PCY1)).shape)
+    # print((S_hy[0] - (PHY1 + PHY2 * df_z)).shape)
+    # print((E_y[0] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) - np.sign(alpha + S_hy)))).shape)
+    # print((S_vy[0] - ((PVY1 + PVY2 * df_z) * F_z)).shape)
+    # print(gamma.shape)
     
     
-#     residuals = np.vstack(shit)
+    residuals = np.vstack(shit)
     
-#     for i in range(1,len(data)):
-#         # Initialize arrays
-#         F_z = -data[i]["FZ"]
-#         alpha = np.tan(data[i]["SA"] * np.pi / 180)
-#         gamma = np.sin(data[i]["IA"] * np.pi / 180)
+    for i in range(1,len(data)):
+        # Initialize arrays
+        F_z = -data[i]["FZ"]
+        alpha = np.tan(data[i]["SA"] * np.pi / 180)
+        gamma = np.sin(data[i]["IA"] * np.pi / 180)
         
-#         # Load sensitivity factor
-#         df_z = (F_z - F_z0) / F_z0
+        # Load sensitivity factor
+        df_z = (F_z - F_z0) / F_z0
             
-#         # Solve for some stuff before hand
-#         mu_y = (PDY1 + PDY2 * df_z) * lambda_mu_y / (1 + PDY3 * gamma ** 2) 
-#         BCD_y = PKY1 * F_z0 * np.sin(PKY4 * np.arctan(F_z / ((PKY2 + PKY5 * gamma ** 2) * F_z0))) / (1 + PKY3 * gamma ** 2)
-#         S_vy_gamma = F_z * (PVY3 + PVY4 * df_z) * gamma
-#         K_y_gamma_0 = F_z * (PKY6 + PKY7 * df_z)
+        # Solve for some stuff before hand
+        mu_y = (PDY1 + PDY2 * df_z) * lambda_mu_y / (1 + PDY3 * gamma ** 2) 
+        BCD_y = PKY1 * F_z0 * np.sin(PKY4 * np.arctan(F_z / ((PKY2 + PKY5 * gamma ** 2) * F_z0))) / (1 + PKY3 * gamma ** 2)
+        S_vy_gamma = F_z * (PVY3 + PVY4 * df_z) * gamma
+        K_y_gamma_0 = F_z * (PKY6 + PKY7 * df_z)
             
-#         # Fit parameters to B C D E P_hy and P_vy
-#         shit = (
-#         residuals,
-#         D_y[i] - (mu_y * F_z),
-#         C_y[i] - PCY1,
-#         B_y[i] - BCD_y / (mu_y * F_z * PCY1 + 1e-8),
-#         S_hy[i] - ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - S_vy_gamma) / (BCD_y + 1e-8)),
-#         E_y[i] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) * np.sign(alpha + ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)) / (BCD_y + 1e-8))))),
-#         S_vy[i] - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)
-#         )
+        # Fit parameters to B C D E P_hy and P_vy
+        shit = (
+        residuals,
+        D_y[i] - (mu_y * F_z),
+        C_y[i] - PCY1,
+        B_y[i] - BCD_y / (mu_y * F_z * PCY1 + 1e-8),
+        S_hy[i] - ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - S_vy_gamma) / (BCD_y + 1e-8)),
+        E_y[i] - ((PEY1 + PEY2 * df_z) * (1 + PEY5 * gamma ** 2 - (PEY3 + PEY4 * gamma) * np.sign(alpha + ((PHY1 + PHY2 * df_z) + (K_y_gamma_0 * gamma - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)) / (BCD_y + 1e-8))))),
+        S_vy[i] - ((PVY1 + PVY2 * df_z) * F_z + S_vy_gamma)
+        )
         
         
-#         residuals = np.vstack(shit)
+        residuals = np.vstack(shit)
         
-#     # print(residuals.size)
-#     # print(residuals.shape)
+    # print(residuals.size)
+    # print(residuals.shape)
     
-#     return residuals.squeeze()
-#     # return huber(1.35, residuals.squeeze()).mean()
+    return residuals.squeeze()
+
 
 
 # # This is the data for 16.0X7.5-10, R20, C2000; Rim_Width=7.0
@@ -418,23 +418,15 @@ def bound2(
 #                          scipy.io.loadmat('data/cornering_SI/B2356raw9.mat')["FZ"]))).mean()
 # cases = []
 
-# # # Split up the data for the cloudy shit
-# # split9_7 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw2.mat'), load_key="SA", window=80, threshold_factor=10)
-# # split = bound2(split9_7, window=110, threshold_factor=5.8)
-# # for i in range(len(split)):
-# #     if (split[i]["ET"].max()-split[i]["ET"].min()<7) & (split[i]["ET"].max()-split[i]["ET"].min()>3):
-# #         cases.append(split[i])
-        
-        
-# # split9_9 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw2.mat'), load_key="SA", window=80, threshold_factor=10)
-# # split = bound2(split9_9, window=110, threshold_factor=5.9)
-# # for i in range(len(split)):
-# #     if (split[i]["ET"].max()-split[i]["ET"].min()<7) & (split[i]["ET"].max()-split[i]["ET"].min()>3):
-# #         cases.append(split[i])
-
 # # Split up the data for the continuous sweeps
 # split9_8 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw8.mat'), load_key="FZ", window=130, threshold_factor=90)
 # split = bound(split9_8, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
+#         cases.append(split[i])
+        
+# split9_9 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw9.mat'), load_key="FZ", window=130, threshold_factor=100)
+# split = bound(split9_9, threshold_factor=0.86)
 # for i in range(len(split)):
 #     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
 #         cases.append(split[i])
@@ -467,6 +459,211 @@ def bound2(
 #                        max_nfev=int(1e+8), verbose=1)
 
 # lat_160X75_R20_80 = np.hstack((result.x,F_z0))
+
+
+
+# # This is the data for 20.5X7.0-13, R20; Rim_Width=7.0
+# F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/cornering_SI/B2356raw16.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw17.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw18.mat')["FZ"]))).mean()
+# cases = []
+
+# # Split up the data for the continuous sweeps                  
+# split9_17 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw17.mat'), load_key="FZ", window=130, threshold_factor=120)
+# split = bound(split9_17, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
+#         cases.append(split[i])     
+        
+# split9_18 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw18.mat'), load_key="FZ", window=130, threshold_factor=90)
+# split = bound(split9_18, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
+#         cases.append(split[i])
+
+# BCDE_params = np.zeros((len(cases),6))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#     else:
+#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
+#     fit_func = lambda x:(first_pass_y(cases[i],x))
+#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, 0, -0.075, -100],
+#                                    [30, 2, 100 + np.abs(cases[i]["FY"]).max(), 1, 0.075, 100]),
+#                            # x_scale="jac",
+#                            # diff_step=1e-4,
+#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCDE_params[i] = result.x
+
+# x0_P = [1, 0, 0, BCDE_params[:,1].mean(), 10, 1.5, 0, 2, 0, 2.5, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0.15, 0]
+
+
+# fit_func = lambda x:(second_pass_y(cases, F_z0, 1, BCDE_params, x))
+# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+8), verbose=1)
+
+# lat_205X70_R20_70 = np.hstack((result.x, F_z0)) 
+
+
+
+# # This is the data for 20.5X7.0-13, R20; Rim_Width=8.0
+# F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/cornering_SI/B2356raw19.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw20.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw21.mat')["FZ"]))).mean()
+# cases = []
+
+# # Split up the data for the continuous sweeps                  
+# split9_17 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw20.mat'), load_key="FZ", window=130, threshold_factor=90)
+# split = bound(split9_17, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
+#         cases.append(split[i])     
+        
+# split9_18 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw21.mat'), load_key="FZ", window=130, threshold_factor=90)
+# split = bound(split9_18, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>6):
+#         cases.append(split[i])
+
+# BCDE_params = np.zeros((len(cases),6))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#     else:
+#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
+#     fit_func = lambda x:(first_pass_y(cases[i],x))
+#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, 0, -0.075, -100],
+#                                    [30, 2, 100 + np.abs(cases[i]["FY"]).max(), 1, 0.075, 100]),
+#                            # x_scale="jac",
+#                            # diff_step=1e-4,
+#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCDE_params[i] = result.x
+
+# x0_P = [1, 0, 0, BCDE_params[:,1].mean(), 10, 1.5, 0, 2, 0, 2.5, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0.15, 0]
+
+
+# fit_func = lambda x:(second_pass_y(cases, F_z0, 1, BCDE_params, x))
+# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+8), verbose=1)
+
+# lat_205X70_R20_80 = np.hstack((result.x, F_z0)) 
+
+
+
+# # This is the data for 18.0X6.0-10, R20; Rim_Width=6.0
+# F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/cornering_SI/B2356raw27.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw28.mat')["FZ"],
+#                          scipy.io.loadmat('data/cornering_SI/B2356raw29.mat')["FZ"]))).mean()
+# cases = []
+
+# # Split up the data for the continuous sweeps                  
+# split9_28 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw28.mat'), load_key="FZ", window=190, threshold_factor=20)
+# split = bound(split9_28, threshold_factor=0.86)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>9):
+#         cases.append(split[i])
+        
+# split9_29 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw29.mat'), load_key="FZ", window=110, threshold_factor=18)
+# split = bound(split9_29, threshold_factor=0.89)
+
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>10):
+#         cases.append(split[i])
+
+# BCDE_params = np.zeros((len(cases),6))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#     else:
+#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
+#     fit_func = lambda x:(first_pass_y(cases[i],x))
+#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, 0, -0.075, -100],
+#                                    [30, 2, 100 + np.abs(cases[i]["FY"]).max(), 1, 0.075, 100]),
+#                            # x_scale="jac",
+#                            # diff_step=1e-4,
+#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCDE_params[i] = result.x
+
+# x0_P = [1, 0, 0, BCDE_params[:,1].mean(), 10, 1.5, 0, 2, 0, 2.5, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0.15, 0]
+
+
+# fit_func = lambda x:(second_pass_y(cases, F_z0, 1, BCDE_params, x))
+# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+8), verbose=1)
+
+# lat_180X60_R20_60 = np.hstack((result.x, F_z0)) 
+
+
+
+# This is the data for 18.0X6.0-10, R20; Rim_Width=6.0
+F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/cornering_SI/B2356raw30.mat')["FZ"],
+                         scipy.io.loadmat('data/cornering_SI/B2356raw31.mat')["FZ"],
+                         scipy.io.loadmat('data/cornering_SI/B2356raw32.mat')["FZ"]))).mean()
+cases = []
+
+# Split up the data for the continuous sweeps                  
+split9_31 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw31.mat'), load_key="FZ", window=110, threshold_factor=18)
+split = bound(split9_31, threshold_factor=0.89)
+for i in range(len(split)):
+    if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>10):
+        cases.append(split[i])
+        
+split9_32 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw32.mat'), load_key="FZ", window=110, threshold_factor=18)
+split = bound(split9_32, threshold_factor=0.89)
+for i in range(len(split)):
+    if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>10):
+        cases.append(split[i])
+
+BCDE_params = np.zeros((len(cases),6))
+
+for i in range(len(cases)):
+    if i == 0:
+        x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+    else:
+        x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
+    fit_func = lambda x:(first_pass_y(cases[i],x))
+    result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
+                           bounds=([0, 1, 0, 0, -0.075, -100],
+                                   [30, 2, 100 + np.abs(cases[i]["FY"]).max(), 1, 0.075, 100]),
+                           # x_scale="jac",
+                           # diff_step=1e-4,
+                           ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+                           max_nfev=int(1e+8), verbose=1)
+    
+    BCDE_params[i] = result.x
+
+x0_P = [1, 0, 0, BCDE_params[:,1].mean(), 10, 1.5, 0, 2, 0, 2.5, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0.15, 0]
+
+
+fit_func = lambda x:(second_pass_y(cases, F_z0, 1, BCDE_params, x))
+result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+                       # x_scale="jac",
+                       # diff_step=1e-4,
+                       ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+                       max_nfev=int(1e+8), verbose=1)
+
+lat_180X60_R20_70 = np.hstack((result.x, F_z0)) 
 
 
 
@@ -583,53 +780,53 @@ def second_pass_x(data, F_z0, lambda_mu_x, BCDE_params, x):
     # return huber(1.35, residuals.squeeze()).sum()
 
 
-# This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=7.0
-F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/straight_SI/B2356raw51.mat')["FZ"],
-                         scipy.io.loadmat('data/straight_SI/B2356raw52.mat')["FZ"]))).mean()
+# # This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=7.0
+# F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/straight_SI/B2356raw51.mat')["FZ"],
+#                          scipy.io.loadmat('data/straight_SI/B2356raw52.mat')["FZ"]))).mean()
 
-cases = []
+# cases = []
 
-# Split up the data for the continuous sweeps
-split9_51 = sort(scipy.io.loadmat('data/straight_SI/B2356raw51.mat'), load_key="FZ", window=100, threshold_factor=10)
-split = bound(split9_51, slip_key="SL", threshold_factor=1)
-for i in range(len(split)):
-    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1):
-        cases.append(split[i])
+# # Split up the data for the continuous sweeps
+# split9_51 = sort(scipy.io.loadmat('data/straight_SI/B2356raw51.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_51, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1):
+#         cases.append(split[i])
 
-split9_52 = sort(scipy.io.loadmat('data/straight_SI/B2356raw52.mat'), load_key="FZ", window=100, threshold_factor=10)
-split = bound(split9_52, slip_key="SL", threshold_factor=1)
-for i in range(len(split)):
-    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1):
-        cases.append(split[i])
+# split9_52 = sort(scipy.io.loadmat('data/straight_SI/B2356raw52.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_52, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1):
+#         cases.append(split[i])
         
-BCDE_params = np.zeros((len(cases),6))
+# BCDE_params = np.zeros((len(cases),6))
 
-for i in range(len(cases)):
-    if i == 0:
-        x0_BCDE = [0, 1.45, 500, 0, 0, 0]
-    else:
-        x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
-    fit_func = lambda x:(first_pass_x(cases[i],x))
-    result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
-                           bounds=([0, 1.2, 0, 0, -0.075, -200],
-                                   [20, 2, 200 + np.abs(cases[i]["FX"]).max(), 1, 0.075, 200]),
-                           # x_scale="jac",
-                           # diff_step=1e-4,
-                           ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
-                           max_nfev=int(1e+8), verbose=1)
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#     else:
+#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
+#     fit_func = lambda x:(first_pass_x(cases[i],x))
+#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
+#                            bounds=([0, 1.2, 0, 0, -0.075, -200],
+#                                    [20, 2, 200 + np.abs(cases[i]["FX"]).max(), 1, 0.075, 200]),
+#                            # x_scale="jac",
+#                            # diff_step=1e-4,
+#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
     
-    BCDE_params[i] = result.x
+#     BCDE_params[i] = result.x
 
-x0_P = [1, 0, BCDE_params[:,1].mean(), 12, 10, -0.6, 0, 0, -0.5, 0, 0, 0, 0, 0]
+# x0_P = [1, 0, BCDE_params[:,1].mean(), 12, 10, -0.6, 0, 0, -0.5, 0, 0, 0, 0, 0]
 
-fit_func = lambda x:(second_pass_x(cases, F_z0, 1, BCDE_params, x))
-result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
-                       # x_scale="jac",
-                       # diff_step=1e-4,
-                       ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
-                       max_nfev=int(1e+8), verbose=1)
+# fit_func = lambda x:(second_pass_x(cases, F_z0, 1, BCDE_params, x))
+# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+8), verbose=1)
 
-long_205X70_R20_70 = np.hstack((result.x, F_z0))
+# long_205X70_R20_70 = np.hstack((result.x, F_z0))
 
 
 
@@ -834,7 +1031,7 @@ def tm_lat(F_z, alpha, gamma, lambda_mu_y, x):
     
     # FORGE THE MAGIC FORMULA
     Y = D_y * np.sin(C_y * np.arctan(B_y * (alpha + S_hy) - E_y * (B_y * (alpha + S_hy) - np.arctan(B_y * (alpha + S_hy))))) + S_vy
-    return Y, BCD_y, D_y, S_hy, S_vy
+    return Y, BCD_y, D_y, S_hy, S_vy, mu_y
 
 
 def tm_long(F_z, s, lambda_mu_x, x):        
@@ -887,7 +1084,7 @@ def first_pass_GX(data, x, long_params):
     F_z = -data["FZ"]
     F_x = data["FX"]
     s = data["SL"]
-    alpha = np.tan(data["SA"] * np.pi / 180)
+    alpha = np.tan(data["SA"] * np.pi / 180).mean()
     
     # Read in the parameters
     B_gx = x[0]
@@ -926,7 +1123,7 @@ def second_pass_GX(data, F_z0, lambda_mu_x, BCES_params, x):
     # Read in the data
     F_z = -data[0]["FZ"]
     s = data[0]["SL"]
-    gamma = np.sin(data[0]["IA"] * np.pi / 180)
+    gamma = np.sin(data[0]["IA"] * np.pi / 180).mean()
     
     
     # Load sensitivity factor
@@ -945,7 +1142,7 @@ def second_pass_GX(data, F_z0, lambda_mu_x, BCES_params, x):
         # Read in the data
         F_z = -data[i]["FZ"]
         s = data[i]["SL"]
-        gamma = np.sin(data[i]["IA"] * np.pi / 180)
+        gamma = np.sin(data[i]["IA"] * np.pi / 180).mean()
         
         # Load sensitivity factor
         df_z = (F_z - F_z0) / F_z0
@@ -962,47 +1159,50 @@ def second_pass_GX(data, F_z0, lambda_mu_x, BCES_params, x):
     
     return residuals.squeeze()
     
-# This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=7.0
-cases = []
+# # This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=7.0
+# cases = []
 
-# Split up the data for the continuous sweeps
-split9_51 = sort(scipy.io.loadmat('data/straight_SI/B2356raw51.mat'), load_key="FZ", window=100, threshold_factor=10)
-split = bound(split9_51, slip_key="SL", threshold_factor=1)
-for i in range(len(split)):
-    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
-        cases.append(split[i])
+# # Split up the data for the continuous sweeps
+# split9_51 = sort(scipy.io.loadmat('data/straight_SI/B2356raw51.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_51, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
+#         cases.append(split[i])
 
-split9_52 = sort(scipy.io.loadmat('data/straight_SI/B2356raw52.mat'), load_key="FZ", window=100, threshold_factor=10)
-split = bound(split9_52, slip_key="SL", threshold_factor=1)
-for i in range(len(split)):
-    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
-        cases.append(split[i])
+# split9_52 = sort(scipy.io.loadmat('data/straight_SI/B2356raw52.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_52, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
+#         cases.append(split[i])
         
-BCES_params = np.zeros((len(cases),4))
+# BCES_params = np.zeros((len(cases),4))
 
-for i in range(len(cases)):
-    x0_BCES = [10, 1.65, 0.5, 0]
-    fit_func = lambda x:(first_pass_GX(cases[i],x,long_205X70_R20_70))
-    result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
-                           bounds=([0, 0, 0.5, -0.5],
-                                   [30, 2, 1, 0.5]),
-                           # x_scale="jac",
-                           # diff_step=1e-4,
-                           ftol=None, xtol=2.3e-16, gtol=2.3e-16,
-                           max_nfev=int(1e+8), verbose=1)
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCES = [10, 1.65, 0.75, 0]
+#     else:
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0]
+#     fit_func = lambda x:(first_pass_GX(cases[i],x,long_205X70_R20_70))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075],
+#                                    [30, 2, 1, 0.075]),
+#                            # x_scale="jac",
+#                            # diff_step=1e-4,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
     
-    BCES_params[i] = result.x
+#     BCES_params[i] = result.x
 
-x0_R = [5, 8, 0, BCES_params[:,1].mean(), 0, 0, BCES_params[:,3].mean()]
+# x0_R = [10, 8, 0, BCES_params[:,1].mean(), 0, 0, BCES_params[:,3].mean()]
 
-fit_func = lambda x:(second_pass_GX(cases, long_205X70_R20_70[-1], 1, BCES_params, x))
-result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
-                       # x_scale="jac",
-                       # diff_step=1e-4,
-                       ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
-                       max_nfev=int(1e+8), verbose=1)
+# fit_func = lambda x:(second_pass_GX(cases, long_205X70_R20_70[-1], 1, BCES_params, x))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+8), verbose=1)
 
-GX_205X70_R20_70 = result.x
+# GX_205X70_R20_70 = result.x
 
 
 
@@ -1013,43 +1213,43 @@ GX_205X70_R20_70 = result.x
 # split9_54 = sort(scipy.io.loadmat('data/straight_SI/B2356raw54.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9_54, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
         
 # split9_55 = sort(scipy.io.loadmat('data/straight_SI/B2356raw55.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9_55, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
 
-# BCDE_params = np.zeros((len(cases),6))
+# BCES_params = np.zeros((len(cases),4))
 
 # for i in range(len(cases)):
 #     if i == 0:
-#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#         x0_BCES = [10, 1.65, 0.75, 0]
 #     else:
-#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
-#     fit_func = lambda x:(first_pass_x(cases[i],x))
-#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
-#                            bounds=([0, 1.2, 0, 0, -0.075, -150],
-#                                    [20, 2, 100 + np.abs(cases[i]["FX"]).max(), 1, 0.075, 150]),
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0]
+#     fit_func = lambda x:(first_pass_GX(cases[i],x,long_205X70_R20_80))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075],
+#                                    [30, 2, 1, 0.075]),
 #                            # x_scale="jac",
 #                            # diff_step=1e-4,
-#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
 #                            max_nfev=int(1e+8), verbose=1)
     
-#     BCDE_params[i] = result.x
+#     BCES_params[i] = result.x
 
-# x0_P = [1, 0, BCDE_params[:,1].mean(), 12, 10, -0.6, 0, 0, -0.5, 0, 0, 0, 0, 0]
+# x0_R = [10, 8, 0, BCES_params[:,1].mean(), 0, 0, BCES_params[:,3].mean()]
 
-# fit_func = lambda x:(second_pass_x(cases, F_z0, 1, BCDE_params, x))
-# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+# fit_func = lambda x:(second_pass_GX(cases, long_205X70_R20_80[-1], 1, BCES_params, x))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
 #                        # x_scale="jac",
 #                        # diff_step=1e-4,
 #                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
 #                        max_nfev=int(1e+8), verbose=1)
 
-# long_205X70_R20_80 = np.hstack((result.x, F_z0))
+# GX_205X70_R20_80 = result.x
 
 
 
@@ -1063,95 +1263,396 @@ GX_205X70_R20_70 = result.x
 # split9_69 = sort(scipy.io.loadmat('data/straight_SI/B2356raw69.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9_69, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
         
 # split9_70 = sort(scipy.io.loadmat('data/straight_SI/B2356raw70.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9_70, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
         
-# BCDE_params = np.zeros((len(cases),6))
+# BCES_params = np.zeros((len(cases),4))
 
 # for i in range(len(cases)):
 #     if i == 0:
-#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#         x0_BCES = [10, 1.65, 0.75, 0]
 #     else:
-#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
-#     fit_func = lambda x:(first_pass_x(cases[i],x))
-#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
-#                            bounds=([0, 1.2, 0, 0, -0.075, -150],
-#                                    [20, 2, 150 + np.abs(cases[i]["FX"]).max(), 1, 0.075, 150]),
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0]
+#     fit_func = lambda x:(first_pass_GX(cases[i],x,long_180X60_R20_60))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075],
+#                                    [30, 2, 1, 0.075]),
 #                            # x_scale="jac",
 #                            # diff_step=1e-4,
-#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
 #                            max_nfev=int(1e+8), verbose=1)
     
-#     BCDE_params[i] = result.x
+#     BCES_params[i] = result.x
 
-# x0_P = [1, 0, BCDE_params[:,1].mean(), 12, 10, -0.6, 0, 0, -0.5, 0, 0, 0, 0, 0]
+# x0_R = [10, 8, 0, BCES_params[:,1].mean(), 0, 0, BCES_params[:,3].mean()]
 
-# fit_func = lambda x:(second_pass_x(cases, F_z0, 1, BCDE_params, x))
-# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+# fit_func = lambda x:(second_pass_GX(cases, long_180X60_R20_60[-1], 1, BCES_params, x))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
 #                        # x_scale="jac",
 #                        # diff_step=1e-4,
 #                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
 #                        max_nfev=int(1e+8), verbose=1)
 
-# long_180X60_R20_60 = np.hstack((result.x, F_z0))
+# GX_180X60_R20_60 = np.hstack((result.x, F_z0))
 
 
 
 # # This is the data for Hoosier 18.0X6.0-10, R20; Rim_Width=7.0
-# F_z0 = np.abs(np.vstack((scipy.io.loadmat('data/straight_SI/B2356raw72.mat')["FZ"],
-#                          scipy.io.loadmat('data/straight_SI/B2356raw73.mat')["FZ"]))).mean()
-
 # cases = []
 
 # # Split up the data for the continuous sweeps
 # split9_72 = sort(scipy.io.loadmat('data/straight_SI/B2356raw72.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9_72, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
 
 # split9 = sort(scipy.io.loadmat('data/straight_SI/B2356raw73.mat'), load_key="FZ", window=100, threshold_factor=10)
 # split = bound(split9, slip_key="SL", threshold_factor=1)
 # for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.5):
 #         cases.append(split[i])
         
-# BCDE_params = np.zeros((len(cases),6))
+# BCES_params = np.zeros((len(cases),4))
 
 # for i in range(len(cases)):
 #     if i == 0:
-#         x0_BCDE = [0, 1.45, 500, 0, 0, 0]
+#         x0_BCES = [10, 1.65, 0.75, 0]
 #     else:
-#         x0_BCDE = [0, BCDE_params[i-1,1], 500, 0, 0, 0]
-#     fit_func = lambda x:(first_pass_x(cases[i],x))
-#     result = least_squares(fit_func, x0_BCDE, jac='3-point', method='trf',
-#                            bounds=([0, 1.2, 0, 0, -0.075, -50],
-#                                    [20, 2, 50 + np.abs(cases[i]["FX"]).max(), 1, 0.075, 50]),
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0]
+#     fit_func = lambda x:(first_pass_GX(cases[i],x,long_180X60_R20_70))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075],
+#                                    [30, 2, 1, 0.075]),
 #                            # x_scale="jac",
 #                            # diff_step=1e-4,
-#                            ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
 #                            max_nfev=int(1e+8), verbose=1)
     
-#     BCDE_params[i] = result.x
+#     BCES_params[i] = result.x
 
-# x0_P = [1, 0, BCDE_params[:,1].mean(), 12, 10, -0.6, 0, 0, -0.5, 0, 0, 0, 0, 0]
+# x0_R = [10, 8, 0, BCES_params[:,1].mean(), 0, 0, BCES_params[:,3].mean()]
 
-# fit_func = lambda x:(second_pass_x(cases, F_z0, 1, BCDE_params, x))
-# result = least_squares(fit_func, x0_P, jac='3-point', method='lm',
+# fit_func = lambda x:(second_pass_GX(cases, long_180X60_R20_70[-1], 1, BCES_params, x))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
 #                        # x_scale="jac",
 #                        # diff_step=1e-4,
 #                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
 #                        max_nfev=int(1e+8), verbose=1)
 
-# long_180X60_R20_70 = np.hstack((result.x, F_z0))
+# GX_180X60_R20_70 = np.hstack((result.x, F_z0))
+   
+
+
+#-------------------------------------------------------------------------------------------------
+#                      DEFINE THE G CORRECTIONS FOR LONGITUDINAL AND LATERAL MFS
+#-------------------------------------------------------------------------------------------------
+
+
+
+def first_pass_GY(data, x, lat_params):
+    # Read in the data
+    F_z = -data["FZ"]
+    F_y = -data["FY"]
+    s = data["SL"]
+    gamma = np.sin(data["SA"] * np.pi / 180).mean()
+    alpha = np.tan(data["SA"] * np.pi / 180)
     
-def GX(F_z, F_z0, s, alpha, gamma, lambda_mu_x, x):    
+    # Read in the parameters
+    B_gy = x[0]
+    C_gy = x[1]
+    E_gy = x[2]
+    S_hgy = x[3]
+    S_vgy = x[4]
+    
+    # FORGE THE MAGIC FORMULA (for G_x)
+    G_x0 = np.cos(C_gy * np.arctan(B_gy * S_hgy - E_gy * (B_gy * S_hgy - np.arctan(B_gy * S_hgy))))
+    G_x = np.cos(C_gy * np.arctan(B_gy * (s + S_hgy) - E_gy * (B_gy * (s + S_hgy) - np.arctan(B_gy * (s + S_hgy))))) / G_x0
+    
+    # UTILIZE THE MAGIC FORMULA (for longitudinal force)
+    Y, _, _, _, _, _ = tm_lat(F_z, alpha, gamma, 1, lat_params) * G_x
+    
+    if (G_x.any() > 1):
+        return (Y - F_y + S_vgy).squeeze() ** 10
+    else: 
+        return (Y - F_y + S_vgy).squeeze()
+
+def second_pass_GY(data, F_z0, lambda_mu_x, BCES_params, x, lat_params):    
+    # Read in the parameters
+    B_gy = BCES_params[:,0]
+    C_gy = BCES_params[:,1]
+    E_gy = BCES_params[:,2]
+    S_hgy = BCES_params[:,3]
+    S_vgy = BCES_params[:,4]
+    
+    # Read in the other parameters
+    RBY1 = x[0]
+    RBY2 = x[1]
+    RBY3 = x[2]
+    RBY4 = x[3]
+    RCY1 = x[4]
+    REY1 = x[5]
+    REY2 = x[6]
+    RHY1 = x[7]
+    RHY2 = x[8]
+    RVY1 = x[9] 
+    RVY2 = x[10]
+    RVY3 = x[11]
+    RVY4 = x[12]
+    RVY5 = x[13]
+    RVY6 = x[14]
+    
+    # Read in the data
+    F_z = -data[0]["FZ"]
+    s = data[0]["SL"]
+    gamma = np.sin(data[0]["IA"] * np.pi / 180).mean()
+    alpha = np.tan(data[0]["SA"] * np.pi / 180)
+    
+    # Load sensitivity factor
+    df_z = (F_z - F_z0) / F_z0
+    
+    # Do some shit with the magic formula
+    Y, _, _, _, _, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+    D_vgy = mu_y * F_z * (RVY1 + RVY2 * df_z + RVY3 * gamma) * np.cos(np.arctan(RVY4 * alpha))
+    
+    # Fit parameters to the other shit
+    shit = (B_gy[0] - ((RBY1 + RBY4 * gamma ** 2) * np.cos(np.arctan(RBY2 * (alpha - RBY3)))),
+            C_gy[0] - RCY1,
+            E_gy[0] - (REY1 + REY2 * df_z),
+            S_hgy[0] - (RHY1 + RHY2 * df_z),
+            S_vgy[0] - (D_vgy * np.sin(RVY5 * np.arctan(RVY6 * s))) 
+            )
+    
+    residuals = np.vstack(shit)
+    
+    for i in range(1,len(data)):
+        # Read in the data
+        F_z = -data[i]["FZ"]
+        s = data[i]["SL"]
+        gamma = np.sin(data[i]["IA"] * np.pi / 180).mean()
+        alpha = np.tan(data[i]["SA"] * np.pi / 180).mean()
+        
+        # Load sensitivity factor
+        df_z = (F_z - F_z0) / F_z0
+        
+        # Do some shit with the magic formula
+        Y, _, _, _, _, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+        D_vgy = mu_y * F_z * (RVY1 + RVY2 * df_z + RVY3 * gamma) * np.cos(np.arctan(RVY4 * alpha))
+        
+        # Fit parameters to the other shit
+        shit = (residuals,
+                B_gy[i] - ((RBY1 + RBY4 * gamma ** 2) * np.cos(np.arctan(RBY2 * (alpha - RBY3)))),
+                C_gy[i] - RCY1,
+                E_gy[i] - (REY1 + REY2 * df_z),
+                S_hgy[i] - (RHY1 + RHY2 * df_z),
+                S_vgy[i] - (D_vgy * np.sin(RVY5 * np.arctan(RVY6 * s))) 
+                )
+        
+        residuals = np.vstack(shit)
+    
+    return residuals.squeeze()
+    
+# # This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=7.0
+# cases = []
+
+# # Split up the data for the continuous sweeps
+# split9_51 = sort(scipy.io.loadmat('data/straight_SI/B2356raw51.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_51, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+
+# split9_52 = sort(scipy.io.loadmat('data/straight_SI/B2356raw52.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_52, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+        
+# BCES_params = np.zeros((len(cases),5))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCES = [10, 1.65, 0.75, 0, 0]
+#     else:
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0, 0]
+#     fit_func = lambda x:(first_pass_GY(cases[i],x,lat_205X70_R20_70))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075, -500],
+#                                    [30, 2, 1, 0.075, 500]),
+#                            # x_scale="jac",4
+#                            # diff_step=1e-4,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCES_params[i] = result.x
+
+# x0_R = [7, 2.5, 0, 0, BCES_params[:,1].mean(), 0, 0, 0.02, 0, 0, 0, -0.2, 14, 1.9, 10]
+
+# fit_func = lambda x:(second_pass_GY(cases, lat_205X70_R20_70[-1], 1, BCES_params, x, lat_205X70_R20_70))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+2), verbose=1)
+
+# GY_205X70_R20_70 = result.x
+
+
+
+# # This is the data for Hoosier 20.5X7.0-13, R20; Rim_Width=8.0
+# cases = []
+
+# # Split up the data for the continuous sweeps
+# split9_54 = sort(scipy.io.loadmat('data/straight_SI/B2356raw54.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_54, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+
+# split9_55 = sort(scipy.io.loadmat('data/straight_SI/B2356raw55.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_55, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+        
+# BCES_params = np.zeros((len(cases),5))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCES = [10, 1.65, 0.75, 0, 0]
+#     else:
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0, 0]
+#     fit_func = lambda x:(first_pass_GY(cases[i],x,lat_205X70_R20_80))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075, -500],
+#                                    [30, 2, 1, 0.075, 500]),
+#                            # x_scale="jac",4
+#                            # diff_step=1e-4,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCES_params[i] = result.x
+
+# x0_R = [7, 2.5, 0, 0, BCES_params[:,1].mean(), 0, 0, 0.02, 0, 0, 0, -0.2, 14, 1.9, 10]
+
+# fit_func = lambda x:(second_pass_GY(cases, lat_205X70_R20_80[-1], 1, BCES_params, x, lat_205X70_R20_80))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+2), verbose=1)
+
+# GY_205X70_R20_80 = result.x
+
+
+
+# # This is the data for Hoosier 18.0X6.0-10, R20; Rim_Width=6.0
+# cases = []
+
+# # Split up the data for the continuous sweeps
+# split9_69 = sort(scipy.io.loadmat('data/straight_SI/B2356raw69.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_69, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+
+# split9_70 = sort(scipy.io.loadmat('data/straight_SI/B2356raw70.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_70, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+#         cases.append(split[i])
+        
+# BCES_params = np.zeros((len(cases),5))
+
+# for i in range(len(cases)):
+#     if i == 0:
+#         x0_BCES = [10, 1.65, 0.75, 0, 0]
+#     else:
+#         x0_BCES = [10, BCES_params[i-1,1], 0.75, 0, 0]
+#     fit_func = lambda x:(first_pass_GY(cases[i],x,lat_180X60_R20_60))
+#     result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+#                            bounds=([0, 1, 0, -0.075, -500],
+#                                    [30, 2, 1, 0.075, 500]),
+#                            # x_scale="jac",4
+#                            # diff_step=1e-4,
+#                            ftol=None, xtol=2.3e-16, gtol=2.3e-16,
+#                            max_nfev=int(1e+8), verbose=1)
+    
+#     BCES_params[i] = result.x
+
+# x0_R = [7, 2.5, 0, 0, BCES_params[:,1].mean(), 0, 0, 0.02, 0, 0, 0, -0.2, 14, 1.9, 10]
+
+# fit_func = lambda x:(second_pass_GY(cases, lat_180X60_R20_60[-1], 1, BCES_params, x, lat_180X60_R20_60))
+# result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
+#                        # x_scale="jac",
+#                        # diff_step=1e-4,
+#                        ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+#                        max_nfev=int(1e+2), verbose=1)
+
+# GY_180X60_R20_60 = result.x
+
+
+
+# This is the data for Hoosier 18.0X6.0-10, R20; Rim_Width=7.0
+cases = []
+
+# Split up the data for the continuous sweeps
+split9_72 = sort(scipy.io.loadmat('data/straight_SI/B2356raw72.mat'), load_key="FZ", window=100, threshold_factor=10)
+split = bound(split9_72, slip_key="SL", threshold_factor=1)
+for i in range(len(split)):
+    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+        cases.append(split[i])
+
+split9_73 = sort(scipy.io.loadmat('data/straight_SI/B2356raw73.mat'), load_key="FZ", window=100, threshold_factor=10)
+split = bound(split9_73, slip_key="SL", threshold_factor=1)
+for i in range(len(split)):
+    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() > 0.8):
+        cases.append(split[i])
+        
+BCES_params = np.zeros((len(cases),5))
+
+for i in range(len(cases)):
+    if i == 0:
+        x0_BCES = [10, 1.65, 0.75, 0, 0]
+    else:
+        x0_BCES = [10, BCES_params[i-1,1], 0.75, 0, 0]
+    fit_func = lambda x:(first_pass_GY(cases[i],x,lat_180X60_R20_70))
+    result = least_squares(fit_func, x0_BCES, jac='3-point', method='trf',
+                           bounds=([0, 1, 0, -0.075, -500],
+                                   [30, 2, 1, 0.075, 500]),
+                           # x_scale="jac",4
+                           # diff_step=1e-4,
+                           ftol=None, xtol=2.3e-16, gtol=2.3e-16,
+                           max_nfev=int(1e+8), verbose=1)
+    
+    BCES_params[i] = result.x
+
+x0_R = [7, 2.5, 0, 0, BCES_params[:,1].mean(), 0, 0, 0.02, 0, 0, 0, -0.2, 14, 1.9, 10]
+
+fit_func = lambda x:(second_pass_GY(cases, lat_180X60_R20_70[-1], 1, BCES_params, x, lat_180X60_R20_70))
+result = least_squares(fit_func, x0_R, jac='3-point', method='lm',
+                       # x_scale="jac",
+                       # diff_step=1e-4,
+                       ftol=2.3e-16, xtol=2.3e-16, gtol=2.3e-16,
+                       max_nfev=int(1e+2), verbose=1)
+
+GY_180X60_R20_70 = result.x
+
+
+
+#-------------------------------------------------------------------------------------------------
+#                      DEFINE THE G CORRECTIONS FOR LONGITUDINAL AND LATERAL MFS
+#-------------------------------------------------------------------------------------------------
+
+
+
+def GX(F_z, F_z0, s, alpha, gamma, x):    
     # Read in the other parameters
     RBX1 = x[0]
     RBX2 = x[1]
@@ -1179,6 +1680,44 @@ def GX(F_z, F_z0, s, alpha, gamma, lambda_mu_x, x):
     
     
     return G_x
+
+def GY(F_z, F_z0, s, alpha, gamma, x, lat_params):    
+    # Read in the other parameters
+    RBY1 = x[0]
+    RBY2 = x[1]
+    RBY3 = x[2]
+    RBY4 = x[3]
+    RCY1 = x[4]
+    REY1 = x[5]
+    REY2 = x[6]
+    RHY1 = x[7]
+    RHY2 = x[8]
+    RVY1 = x[9] 
+    RVY2 = x[10]
+    RVY3 = x[11]
+    RVY4 = x[12]
+    RVY5 = x[13]
+    RVY6 = x[14]
+    
+    # Load sensitivity factor
+    df_z = (F_z - F_z0) / F_z0
+    
+    # Do some shit with the magic formula
+    Y, _, _, _, _, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+    D_vgy = mu_y * F_z * (RVY1 + RVY2 * df_z + RVY3 * gamma) * np.cos(np.arctan(RVY4 * alpha))
+    
+    # Fit parameters to the other shit
+    B_gy = (RBY1 + RBY4 * gamma ** 2) * np.cos(np.arctan(RBY2 * (alpha - RBY3)))
+    C_gy = RCY1
+    E_gy = REY1 + REY2 * df_z
+    S_hgy = RHY1 + RHY2 * df_z
+    S_vgy = D_vgy * np.sin(RVY5 * np.arctan(RVY6 * s))
+    
+    # FORGE THE MAGIC FORMULA (for G_x)
+    G_x0 = np.cos(C_gy * np.arctan(B_gy * S_hgy - E_gy * (B_gy * S_hgy - np.arctan(B_gy * S_hgy))))
+    G_x = np.cos(C_gy * np.arctan(B_gy * (s + S_hgy) - E_gy * (B_gy * (s + S_hgy) - np.arctan(B_gy * (s + S_hgy))))) / G_x0
+
+    return G_x, S_vgy
     
 
 

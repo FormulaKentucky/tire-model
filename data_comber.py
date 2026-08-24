@@ -215,25 +215,21 @@ def bound2(
 
 cases = []
 
-# split9 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw4.mat'), load_key="FZ", window=200, threshold_factor=30)
-
-# # for i in range(len(split9)):
-# #     plt.plot(split9[i]["ET"],split9[i]["FZ"])
-
-# split = bound(split9, slip_key="SA", threshold_factor=0.86)
-
-# # for i in range(len(split)):
-# #     plt.plot(split[i]["ET"],split[i]["SA"])
-
-# for i in range(len(split)):
-#     if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>8):
-#         cases.append(split[i])
-#         plt.plot(split[i]["SA"],split[i]["MZ"])
+split9_8 = sort(scipy.io.loadmat('data/cornering_SI/B2356raw32.mat'), load_key="FZ", window=110, threshold_factor=18)
+# for i in range(len(split9_8)):
+#     plt.plot(split9_8[i]["ET"],split9_8[i]["FZ"])
+split = bound(split9_8, threshold_factor=0.89)
+# for i in range(len(split9_8)):
+#     plt.plot(split[i]["ET"],split[i]["SA"])
+for i in range(len(split)):
+    if (split[i]["ET"].max()-split[i]["ET"].min()<12) & (split[i]["ET"].max()-split[i]["ET"].min()>10):
+        cases.append(split[i])
+        plt.plot(split[i]["ET"],split[i]["SA"])
         
 
-split9_69 = sort(scipy.io.loadmat('data/straight_SI/B2356raw69.mat'), load_key="FZ", window=100, threshold_factor=10)
-split = bound(split9_69, slip_key="SL", threshold_factor=1)
-for i in range(len(split)):
-    if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) & (np.abs(split[i]["SA"]).mean() < 1e-1) & (np.abs(split[i]["IA"]).mean() < 1e-1):
-        cases.append(split[i])
-        plt.plot(split[i]["ET"],split[i]["FZ"])
+# split9_69 = sort(scipy.io.loadmat('data/straight_SI/B2356raw69.mat'), load_key="FZ", window=100, threshold_factor=10)
+# split = bound(split9_69, slip_key="SL", threshold_factor=1)
+# for i in range(len(split)):
+#     if (split[i]["ET"].max()-split[i]["ET"].min()<15) & (split[i]["ET"].max()-split[i]["ET"].min()>5) :
+#         cases.append(split[i])
+#         plt.plot(split[i]["SL"],split[i]["FY"])
