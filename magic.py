@@ -1069,7 +1069,7 @@ def tm_long(F_z, s, lambda_mu_x, x):
     
     # FORGE THE MAGIC FORMULA
     Y = D_x * np.sin(C_x * np.arctan(B_x * (s + S_hx) - E_x * (B_x * (s + S_hx) - np.arctan(B_x * (s + S_hx))))) + S_vx
-    return Y
+    return Y, BCD_x
 
 
 
@@ -1829,12 +1829,175 @@ def fit_MY(data, x, long_params, gx_params):
 
 
 
+#-------------------------------------------------------------------------------------------------
+#                    DETERMINE THE ROLLING RESISTANCE MOMENT   
+#-------------------------------------------------------------------------------------------------
 
 
 
-
-
-
+def first_pass_MX(data, x, lat_params, long_params, gx_params, gy_params):
+    # Read in the data
+    F_z = -data["FZ"]
+    M_z = data["MZ"]
+    s = data["SL"]
+    gamma = np.sin(data["SA"] * np.pi / 180).mean()
+    alpha = np.tan(data["SA"] * np.pi / 180)
+    F_z0_y = lat_params[-1]
+    F_z0_x = long_params[-1]
+    
+    # Read in the parameters
+    D_t = x[0]
+    C_t = x[1]
+    B_t = x[2]
+    E_t = x[3]
+    D_r = x[4]
+    C_r = x[5]
+    B_r = x[6]
+    S_arm = x[7]
+    S_vy = x[8]
+    S_ht = x[9]
+    
+    # Get the forces from MAGIC FORMULA
+    G_y, S_vgy = GY(F_z, F_z0_y, s, alpha, gamma, gx_params, lat_params)
+    G_x = GX(F_z, F_z0_x, s, alpha, gamma, gx_params)
+    F_y, BCD_y, D_y, S_hy, S_vy, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+    F_y = F_y * G_y + S_vgy
+    F_x, BCD_x = tm_long(F_z, s, 1, long_params)
+    F_x = F_x * G_x
+    
+    # Calculate some stuff
+    S_hf = S_hy + S_vy / (BCD_y + 1e-8)
+    alpha_t = np.sqrt((alpha + S_ht) ** 2 + (BCD_x / (BCD_y+1e-8)) ** 2 * s ** 2) * np.sign(alpha + S_ht)
+    alpha_r = np.sqrt((alpha + S_hf) ** 2 + (BCD_x / (BCD_y+1e-8)) ** 2 * s ** 2) * np.sign(alpha + S_hf)
+    
+    # CALCULATE THE PNEUMATIC TRAIL AND CORRECTION
+    t = D_t * np.cos(C_t * np.arctan(B_t * alpha_t - E_t * (B_t * alpha_t - np.arctan(B_t * alpha_t)))) * np.cos(np.tan(alpha))
+    M_zr = D_r * np.cos(C_r * np.arctan(B_r * alpha_r))
+    
+    # CALCULATE THE SELF-ALIGNING TORQUE
+    Y = -1 * t * F_y + S_arm * F_x + M_zr
+    
+    return (Y - M_z).squeeze()
+    
+def second_pass_MZ(data, F_z0, lambda_mu_x, BCDE_params, x, lat_params, long_params, gx_params, gy_params):    
+    # Read in the parameters
+    D_t = BCDE_params[0]
+    C_t = BCDE_params[1]
+    B_t = BCDE_params[2]
+    E_t = BCDE_params[3]
+    D_r = BCDE_params[4]
+    C_r = BCDE_params[5]
+    B_r = BCDE_params[6]
+    S_arm = BCDE_params[7]
+    S_ht = BCDE_params[8]
+    
+    # Get the unloaded radius
+    R_0 = long_params[-2] * 0.5 * 0.0254 # [m]
+    
+    # Read in the other parameters
+    QDZ1 = x[0]
+    QDZ2 = x[1]
+    QDZ3 = x[2]
+    QDZ4 = x[3]
+    QDZ5 = x[4]
+    QDZ6 = x[5]
+    QDZ7 = x[6]
+    QDZ8 = x[7]
+    QDZ9 = x[8]
+    QDZ10 = x[9]
+    QDZ11 = x[10]
+    QCZ1 = x[11]
+    QBZ1 = x[12]
+    QBZ2 = x[13]
+    QBZ3 = x[14]
+    QBZ4 = x[15]
+    QBZ5 = x[16]
+    QBZ6 = x[17]
+    QBZ7 = x[18]
+    QBZ8 = x[19]
+    QBZ9 = x[20]
+    QBZ10 = x[21]
+    QBZ11 = x[22]
+    QEZ1 = x[23]
+    QEZ2 = x[24]
+    QEZ3 = x[25]
+    QEZ4 = x[26]
+    QEZ5 = x[27]
+    QHZ1 = x[28]
+    QHZ2 = x[29]
+    QHZ3 = x[30]
+    QHZ4 = x[31]
+    QSZ1 = x[32]
+    QSZ2 = x[33]
+    QSZ3 = x[34]
+    QSZ4 = x[35]
+    
+    
+    # Read in the data
+    F_z = -data[0]["FZ"]
+    s = data[0]["SL"]
+    gamma = np.sin(data[0]["IA"] * np.pi / 180).mean()
+    alpha = np.tan(data[0]["SA"] * np.pi / 180)
+    V_c = data[0]["V"] * 0.277778
+    
+    # Load sensitivity factor
+    df_z = (F_z - F_z0) / F_z0
+    
+    # Magic
+    G_y, S_vgy = GY(F_z, lat_params[-1], s, alpha, gamma, gx_params, lat_params)
+    F_y, BCD_y, D_y, S_hy, S_vy, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+    F_y = F_y * G_y + S_vgy
+    _, BCD_x = tm_long(F_z, s, 1, long_params)
+    alpha_t = np.sqrt((alpha + (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma)) ** 2 + (BCD_x / (BCD_y+1e-8)) ** 2 * s ** 2) * np.sign(alpha + (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma))
+    
+    # Fit parameters to the other shit
+    shit = (D_t[0] - (F_z * (R_0 / F_z0) * (QDZ1 + QDZ2 * df_z) * np.sign(V_c)) * (1 + QDZ3 * np.abs(gamma) + QDZ4 * gamma ** 2),
+            C_t[0] - QCZ1,
+            B_t[0] - (QBZ1 + QBZ2 * df_z + QBZ3 * df_z ** 2) * (1 + QBZ5 * np.abs(gamma) + QBZ6 * gamma ** 2) * BCD_y / (mu_y + 1e-8),
+            E_t[0] - (QEZ1 + QEZ2 * df_z + QEZ3 * df_z ** 2) * (1 + (QEZ4 + QEZ5 * gamma) * 2 * np.arctan((QBZ1 + QBZ2 * df_z + QBZ3 * df_z ** 2) * (1 + QBZ5 * np.abs(gamma) + QBZ6 * gamma ** 2) * BCD_y / (mu_y + 1e-8) * QCZ1 * alpha_t) / np.pi),
+            D_r[0] - F_z * R_0 * ((QDZ6 + QDZ7 * df_z) + (QDZ8 + QDZ9 * df_z) * gamma + (QDZ10 + QDZ11 * df_z) * gamma * np.abs(gamma)) * np.cos(np.tan(alpha)) * np.sign(V_c),
+            C_r[0] - 1,
+            B_r[0] - (QBZ9 * BCD_y / (mu_y) + QBZ10 * BCD_y / D_y),
+            S_arm[0] - R_0 * (QSZ1 + QSZ2 * (F_y / F_z0) + (QSZ3 + QSZ4 * df_z) * gamma),
+            S_ht[0] - (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma)
+            )
+    
+    residuals = np.vstack(shit)
+    
+    for i in range(1,len(data)):
+        # Read in the data
+        F_z = -data[i]["FZ"]
+        s = data[i]["SL"]
+        gamma = np.sin(data[i]["IA"] * np.pi / 180).mean()
+        alpha = np.tan(data[i]["SA"] * np.pi / 180)
+        V_c = data[i]["V"] * 0.277778
+        
+        # Load sensitivity factor
+        df_z = (F_z - F_z0) / F_z0
+        
+        # Magic
+        G_y, S_vgy = GY(F_z, lat_params[-1], s, alpha, gamma, gx_params, lat_params)
+        F_y, BCD_y, D_y, S_hy, S_vy, mu_y = tm_lat(F_z, alpha, gamma, 1, lat_params)
+        F_y = F_y * G_y + S_vgy
+        _, BCD_x = tm_long(F_z, s, 1, long_params)
+        alpha_t = np.sqrt((alpha + (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma)) ** 2 + (BCD_x / (BCD_y+1e-8)) ** 2 * s ** 2) * np.sign(alpha + (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma))
+        
+        # Fit parameters to the other shit
+        shit = (residuals,
+                D_t[i] - (F_z * (R_0 / F_z0) * (QDZ1 + QDZ2 * df_z) * np.sign(V_c)) * (1 + QDZ3 * np.abs(gamma) + QDZ4 * gamma ** 2),
+                C_t[i] - QCZ1,
+                B_t[i] - (QBZ1 + QBZ2 * df_z + QBZ3 * df_z ** 2) * (1 + QBZ5 * np.abs(gamma) + QBZ6 * gamma ** 2) * BCD_y / (mu_y + 1e-8),
+                E_t[i] - (QEZ1 + QEZ2 * df_z + QEZ3 * df_z ** 2) * (1 + (QEZ4 + QEZ5 * gamma) * 2 * np.arctan((QBZ1 + QBZ2 * df_z + QBZ3 * df_z ** 2) * (1 + QBZ5 * np.abs(gamma) + QBZ6 * gamma ** 2) * BCD_y / (mu_y + 1e-8) * QCZ1 * alpha_t) / np.pi),
+                D_r[i] - F_z * R_0 * ((QDZ6 + QDZ7 * df_z) + (QDZ8 + QDZ9 * df_z) * gamma + (QDZ10 + QDZ11 * df_z) * gamma * np.abs(gamma)) * np.cos(np.tan(alpha)) * np.sign(V_c),
+                C_r[i] - 1,
+                B_r[i] - (QBZ9 * BCD_y / (mu_y) + QBZ10 * BCD_y / D_y),
+                S_arm[i] - R_0 * (QSZ1 + QSZ2 * (F_y / F_z0) + (QSZ3 + QSZ4 * df_z) * gamma),
+                S_ht[i] - (QHZ1 + QHZ2 * df_z + (QHZ3 + QHZ4 * df_z) * gamma)
+                )
+        
+        residuals = np.vstack(shit)
+    
+    return residuals.squeeze()
 
 
 
